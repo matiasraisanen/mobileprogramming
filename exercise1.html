@@ -17,11 +17,11 @@
 
       class HelloComponent extends React.Component {
         render() {
-          return <div>Hello World</div>;
+          return <div>Hello {this.props.firstname}</div>;
         }
       }
 
-      ReactDOM.render(<HelloComponent />, document.getElementById('app'));
+      ReactDOM.render(<HelloComponent firstname="Matias" />, document.getElementById('app'));
     </script>
   </body>
 </html>
