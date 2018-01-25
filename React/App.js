@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 
 class App extends Component {
   constructor(props) {
     super(props);
-    this.state = {description: '', date: '', todos: []}
+    this.state = {description: '', date: '', todos: [], delid: ''}
   }
 
   inputChanged = (event) => {
@@ -17,6 +16,16 @@ class App extends Component {
     const newTodo = {date: this.state.date, description: this.state.description};
     this.setState({
       todos: [...this.state.todos, newTodo]
+    });
+  }
+
+  delTodo = (event) => {
+    event.preventDefault();
+    this.setState({delid: 1});
+    const indexi = parseInt(event.target.id, 10);
+    const newList = this.state.todos.filter((todo, i) => i !== indexi);
+    this.setState({
+      todos: newList
     });
   }
 
@@ -38,9 +47,14 @@ class App extends Component {
           <table>
           <tbody>
           <tr>
-            <td>Date</td><td>Description</td>
+            <td>Date</td><td>Description</td><td></td>
           </tr>
-            {this.state.todos.map((item, index) => <tr key={index}><td>{item.date}</td><td>{item.description}</td></tr>)}
+            {this.state.todos.map((item, index) => 
+              <tr key={index}>
+                <td>{item.date}</td>
+                <td>{item.description}</td>
+                <td><input id={index} type="submit" onClick={this.delTodo} value="Delete"/></td>
+              </tr>)}
           </tbody>
           </table>
         </div>          
