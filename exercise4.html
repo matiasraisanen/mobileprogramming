@@ -1,0 +1,81 @@
+<!--Tee kuuntelija nappulalle, ei formia-->
+<!--Tai kokeile {this.state.sometext}-->
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>React GitHub repo search</title>
+    <style>
+      table {
+        border-collapse: collapse;
+      }
+
+      table, td, th {
+        border: 1px solid black;
+      }
+    </style>
+    
+  </head>
+  <body>
+    <!-- Root container for react components -->
+    <div id='root'></div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.6.1/react.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.6.1/react-dom.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.min.js"></script>
+    
+    <script type="text/babel">
+      class RepositoryList extends React.Component {
+        constructor(props) {
+          super(props);
+          this.state = {listItems: [], sometext: ''};
+        }
+        
+        inputChanged = (event) => {
+          this.setState({sometext: event.target.value});
+        }
+
+        search = (event) => {
+          event.preventDefault(); // ignoresthedefaultaction
+          const repo = this.state.sometext;
+          const url = 'https://api.github.com/search/repositories?q=' + repo;
+          fetch(url)
+          .then((response) => response.json()) 
+          .then((responseData) => { 
+            this.setState({ 
+              listItems: responseData.items,
+            }); 
+          })          
+        }
+
+        render() {
+          const itemRows = this.state.listItems.map((repository) => 
+              <tr key={repository.id}>
+                <td>{repository.full_name}</td>
+                <td><a href={repository.html_url}>{repository.html_url}</a></td>
+              </tr>
+            )
+           
+          return (
+            
+
+            <div>
+              <h2>Repository fetcher</h2>
+                 <input type="text" onChange={this.inputChanged} value={this.state.sometext}/>
+                 <input type="submit" onClick={this.search} value="Search"/>
+
+              <table>
+                <tbody>
+                  <tr><th>Name</th><th>Url</th></tr>
+                  {itemRows}
+                </tbody>
+              </table>
+            </div>
+          );
+        }
+      }
+
+      ReactDOM.render(<RepositoryList />, document.getElementById('root'));
+    </script>
+  </body>
+</html>
