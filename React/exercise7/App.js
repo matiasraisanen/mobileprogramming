@@ -5,7 +5,8 @@ import TodoTable from './TodoTable';
 class App extends Component {
   constructor(props) {
     super(props);
-    this.state = {description: '', date: '', todos: []}
+    this.state = {description: '', date: '', todos: []};
+
   }
 
   inputChanged = (event) => {
@@ -29,6 +30,9 @@ class App extends Component {
   });
   }
 
+
+
+
   render() {
     return (
       <div className="App">
@@ -44,9 +48,9 @@ class App extends Component {
         </div>
 
         <div>
-          <TodoTable todos={this.state.todos} />
-        </div>          
-      </div>    
+          <TodoTable delTodo={this.delTodo} todos={this.state.todos} />
+        </div>
+      </div>
     );
   }
 }
