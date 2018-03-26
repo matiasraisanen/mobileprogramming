@@ -1,6 +1,7 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, TextInput,  FlatList} from 'react-native';
+import { StyleSheet, Text, View, TextInput,  FlatList} from 'react-native';
 import Expo, { SQLite } from 'expo';
+import{  List, ListItem, FormLabel, FormInput, Button } from 'react-native-elements';
 
 const db = SQLite.openDatabase('shoplistdb.db');
 
@@ -8,7 +9,14 @@ export default class App extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {shoplist: [], text: '', amount: ''}
+    this.state = {shoplist: [], product: '', amount: ''}
+  }
+
+  componentWillMount() {
+    db.transaction(tx => {
+      tx.executeSql('drop table shopList');
+    });
+    this.updateList();
   }
 
   componentDidMount() {
@@ -59,31 +67,37 @@ export default class App extends React.Component {
     return (
       <View style={styles.main}>
 
-        <View style={styles.container}>
+        <View style={styles.top}>
 
-          <TextInput  style={styles.textinput}
-            placeholder='product'
+          <FormLabel>PRODUCT</FormLabel>
+            <FormInput placeholder='product'
             onChangeText={(product) => this.setState({product})}
             value={this.state.product} />
 
-          <TextInput  style={styles.textinput}
+            <FormLabel>AMOUNT</FormLabel>
+          <FormInput  style={styles.textinput}
             placeholder='amount'
             onChangeText={(amount) => this.setState({amount})}
             value={this.state.amount} />
-            <Button onPress={this.saveItem} title=" ADD " />
+            <Button raised icon={{name: 'save'}} onPress={this.saveItem} title="SAVE" />
         </View>
 
         <View style={styles.container}>
           <Text style={styles.bold}>Shopping List</Text>
-          <FlatList
-          keyExtractor={item => item.id}
-          renderItem={({item}) => <View style={styles.listcontainer}><Text style={{fontSize: 18}}>{item.product}, {item.amount}   </Text>
-          <Text style={{fontSize: 18, color: '#0000ff'}} onPress={() => this.deleteItem(item.id)}>bought</Text></View>} data={this.state.shoplist} ItemSeparatorComponent={this.listSeparator}
-
-
-          />
+          <List containerStyle={{alignSelf: 'stretch', minWidth: 250, marginBottom: 20}}>
+            {
+              this.state.shoplist.map((item, i) => (
+                <ListItem
+                key={i}
+                title={item.product}
+                subtitle={item.amount}
+                rightTitle='bought'
+                onPressRightIcon={() => this.deleteItem(item.id)}
+                />
+              ))
+            }
+          </List>
         </View>
-
       </View>
     );
   }
@@ -99,7 +113,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
+  },
+
+  top: {
+    marginTop: 30,
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'stretch',
+    justifyContent: 'flex-start',
   },
 
   listcontainer: {
